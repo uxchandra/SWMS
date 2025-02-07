@@ -7,7 +7,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
+use App\Imports\UsersImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ManajemenUserController extends Controller
 {
@@ -50,7 +53,7 @@ class ManajemenUserController extends Controller
         $validator = Validator::make($request->all(), [
             'name'      => 'required',
             'username'     => 'required',
-            'password'  => 'required|min:4',
+            'password'  => 'required|min:1',
             'role_id'   => 'required'
         ], [
             'name.required'     => 'Form Nama Wajib Di isi !',
@@ -68,6 +71,7 @@ class ManajemenUserController extends Controller
             'name'      => $request->name,
             'username'     => $request->username,
             'password'  => Hash::make($request->password),
+            'plain_password' => Crypt::encryptString($request->password),
             'role_id'   => $request->role_id
         ]);
 
@@ -129,7 +133,7 @@ class ManajemenUserController extends Controller
         // Cek apakah password diubah atau tidak
         if (!empty($request->password)) {
             $validatorPassword = Validator::make($request->all(), [
-                'password'  => 'min:4'
+                'password'  => 'min:1'
             ], [
                 'password.min'  => 'Password minimal 4 Huruf/Angka/Karakter !'
             ]);
@@ -170,5 +174,30 @@ class ManajemenUserController extends Controller
         $roles = Role::all();
 
         return response()->json($roles);
+    }
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        try {
+            Excel::import(new UsersImport, $request->file('file'));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Berhasil Diimport!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

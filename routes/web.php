@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/data-pengguna/get-data', [ManajemenUserController::class, 'getDataPengguna']);
         Route::get('/api/role/', [ManajemenUserController::class, 'getRole']);
+        Route::post('/data-pengguna/import', [ManajemenUserController::class, 'import'])->name('data-pengguna.import');
         Route::resource('/data-pengguna', ManajemenUserController::class);
     
         Route::get('/hak-akses/get-data', [HakAksesController::class, 'getDataRole']);

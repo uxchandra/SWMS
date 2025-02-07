@@ -2,14 +2,19 @@
 
 @include('data-pengguna.create')
 @include('data-pengguna.edit')
+@include('data-pengguna.import')
 
 @section('content')
     <div class="section-header">
         <h1>Data Pengguna</h1>
         <div class="ml-auto">
-            <a href="javascript:void(0)" class="btn btn-primary" id="button_tambah_pengguna"><i class="fa fa-plus"></i> Tambah
+            <a href="javascript:void(0)" class="btn btn-primary" id="button_import"><i class="fa fa-upload"></i> 
+                Import Excel
+            </a>
+            <a href="javascript:void(0)" class="btn btn-info" id="button_tambah_pengguna"><i class="fa fa-plus"></i> Tambah
                 Pengguna</a>
         </div>
+
     </div>
 
     <div class="row">
@@ -35,6 +40,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Datatables Jquery -->
     <script>
@@ -67,6 +73,40 @@
                         `;
                         $('#table_id').DataTable().row.add($(pengguna)).draw(false);
                     });
+                }
+            });
+        });
+
+    </script>
+
+
+    <script>
+        $('body').on('click', '#button_import', function() {
+            $('#modal_import').modal('show');
+        });
+
+        $('#importForm').submit(function(e) {
+            e.preventDefault();
+            
+            let formData = new FormData(this);
+            
+            $.ajax({
+                url: '/data-pengguna/import',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if(response.success) {
+                        Swal.fire('Berhasil!', response.message, 'success');
+                        $('#importModal').modal('hide');
+                        // Refresh table
+                        $('#table_id').DataTable().ajax.reload();
+                    }
+                },
+                error: function(xhr) {
+                    let errors = xhr.responseJSON;
+                    Swal.fire('Error!', 'Terjadi kesalahan saat import data', 'error');
                 }
             });
         });

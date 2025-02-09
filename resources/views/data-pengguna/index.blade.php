@@ -9,7 +9,7 @@
         <h1>Data Pengguna</h1>
         <div class="ml-auto">
             <a href="javascript:void(0)" class="btn btn-primary" id="button_import"><i class="fa fa-upload"></i> 
-                Import Excel
+                Import Data
             </a>
             <a href="javascript:void(0)" class="btn btn-info" id="button_tambah_pengguna"><i class="fa fa-plus"></i> Tambah
                 Pengguna</a>
@@ -46,34 +46,38 @@
     <script>
         $(document).ready(function() {
             $('#table_id').DataTable({
-                paging: true
-            });
-            $.ajax({
-                url: "/data-pengguna/get-data",
-                type: "GET",
-                dataType: 'JSON',
-                success: function(response) {
-                    let counter = 1;
-                    if ($.fn.DataTable.isDataTable('#table_id')) {
-                        $('#table_id').DataTable().destroy();
+                paging: true,
+                ajax: {
+                    url: "/data-pengguna/get-data",
+                    type: "GET",
+                    dataSrc: 'data',
+                    beforeSend: function() {
+                        // Opsional: Tampilkan loading
+                    },
+                    complete: function() {
+                        // Opsional: Sembunyikan loading
                     }
-                    $('#table_id').DataTable().clear();
-                    $.each(response.data, function(key, value) {
-                        let pengguna = `
-                        <tr class="pengguna-row" id="index_${value.id}">
-                            <td>${counter++}</td>
-                            <td>${value.name}</td>
-                            <td>${value.username}</td>
-                            <td>${value.role.role}</td>
-                            <td>
-                                <a href="javascript:void(0)" id="button_edit_pengguna" data-id="${value.id}" class="btn btn-icon btn-warning btn-lg mb-2"><i class="far fa-edit"></i> </a>
-                                <a href="javascript:void(0)" id="button_hapus_pengguna" data-id="${value.id}" class="btn btn-icon btn-danger btn-lg mb-2"><i class="fas fa-trash"></i> </a>
-                            </td>
-                        </tr>
-                        `;
-                        $('#table_id').DataTable().row.add($(pengguna)).draw(false);
-                    });
-                }
+                },
+                columns: [
+                    {
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    { data: 'name' },
+                    { data: 'username' },
+                    { data: 'role.role' },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <a href="javascript:void(0)" id="button_edit_pengguna" data-id="${row.id}" class="btn btn-icon btn-warning btn-lg mb-2"><i class="far fa-edit"></i></a>
+                                <a href="javascript:void(0)" id="button_hapus_pengguna" data-id="${row.id}" class="btn btn-icon btn-danger btn-lg mb-2"><i class="fas fa-trash"></i></a>
+                            `;
+                        }
+                    }
+                ],
             });
         });
 
@@ -99,7 +103,7 @@
                 success: function(response) {
                     if(response.success) {
                         Swal.fire('Berhasil!', response.message, 'success');
-                        $('#importModal').modal('hide');
+                        $('#modal_import').modal('hide');
                         // Refresh table
                         $('#table_id').DataTable().ajax.reload();
                     }

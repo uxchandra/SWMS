@@ -41,19 +41,6 @@
             </div>
 
             <div class="form-group">
-              <label>Satuan Barang</label>
-              <select class="form-control" name="satuan_id" id="detail_satuan_id" disabled>
-                @foreach ($satuans as $satuan)
-                    @if (old('satuan', $satuan->satuans) == $satuan->id)
-                      <option value="{{ $satuan->id }}" selected>{{ $satuan->satuan }}</option>
-                    @else
-                      <option value="{{ $satuan->id }}">{{ $satuan->satuan }}</option>
-                    @endif
-                @endforeach
-              </select>
-            </div>
-
-            <div class="form-group">
               <label>Stok Saat Ini</label>
               <input type="text" class="form-control" name="stok" id="detail_stok" disabled>
             </div>

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('kode')->unique();
             $table->string('nama_barang');
-            $table->string('jenis');
+            $table->foreignId('jenis_id');
             $table->string('size');
             $table->integer('stok_minimum');
             $table->integer('stok_maximum');

@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>Hak Akses</h1>
         <div class="ml-auto">
-            <a href="javascript:void(0)" class="btn btn-primary" id="button_tambah_role"><i class="fa fa-plus"></i> Tambah
+            <a href="javascript:void(0)" class="btn btn-info" id="button_tambah_role"><i class="fa fa-plus"></i> Tambah
                 Role</a>
         </div>
     </div>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>SWM</title>
+  <title>Warehouse Management System</title>
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="assets/modules/bootstrap/css/bootstrap.min.css">
@@ -86,7 +86,7 @@
         <aside id="sidebar-wrapper ">
 
           <div class="sidebar-brand">
-            <img src="images/imagee.png" alt="Logo SIMPLER" style="height: 35px; width: auto; margin-right: 10px;">
+            <img src="images/imagee.png" alt="Logo SIMPLER" style="height: 35px; width: auto; margin-right: 10px; margin-top: 20px">
           </div>
 
           <ul class="sidebar-menu"> 
@@ -98,9 +98,9 @@
               </li>
 
               <li class="menu-header">DATA MASTER</li>
-                <li class="dropdown">
-                  <a class="nav-link {{ Request::is('barang') ? 'active' : '' }}" href="/barang"><i class="fas fa-thin fa-cubes"></i><span>Data Barang</span></a>
-                </li>
+                <li><a class="nav-link {{ Request::is('barang') ? 'active' : '' }}" href="/barang"><i class="fas fa-thin fa-cubes"></i><span>Data Barang</span></a></li>
+                <li><a class="nav-link {{ Request::is('jenis-barang') ? 'active' : '' }}" href="/jenis-barang"><i class="fas fa-list"></i><span>Kategori</span></a></li>
+                <li><a class="nav-link {{ Request::is('department') ? 'active' : '' }}" href="/department"><i class="fas fa-thin fa-building"></i><span>Departemen</span></a></li>
 
               {{-- <li class="menu-header">MANAJEMEN BARANG</li>
               <li><a class="nav-link {{ Request::is('barang-masuk') ? 'active' : '' }}" href="barang-masuk"><i class="fa fa-solid fa-arrow-right"></i><span>Barang Masuk</span></a></li>

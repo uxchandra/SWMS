@@ -49,19 +49,6 @@
               </div>
 
               <div class="form-group">
-                <label>Satuan Barang</label>
-                <select class="form-control" name="satuan_id" id="edit_satuan_id">
-                  @foreach ($satuans as $satuan)
-                  @if (old('satuan', $satuan->satuans) == $satuan->id)
-                  <option value="{{ $satuan->id }}" selected>{{ $satuan->satuan }}</option>
-                  @else
-                  <option value="{{ $satuan->id }}">{{ $satuan->satuan }}</option>
-                  @endif
-                  @endforeach
-                </select>
-              </div>
-
-              <div class="form-group">
                 <label>Stok Minimum</label>
                 <input type="number" class="form-control" name="stok_minimum" id="edit_stok_minimum">
                 <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-stok_minimum"></div>

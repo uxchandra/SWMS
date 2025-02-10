@@ -12,7 +12,7 @@ class Barang extends Model
     protected $fillable = [
         'kode', 
         'nama_barang', 
-        'jenis', 
+        'jenis_id', 
         'size',
         'stok_minimum', 
         'stok_maximum', 
@@ -22,4 +22,9 @@ class Barang extends Model
     ];
     protected $guarded = ['id'];
     protected $ignoreChangedAttributes = ['updated_at'];
+
+    public function jenis()
+    {
+        return $this->belongsTo(Jenis::class, 'jenis_id');
+    }
 }

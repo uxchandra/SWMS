@@ -3,26 +3,11 @@
 namespace App\Imports;
 
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithMappedCells;
-use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use App\Models\Barang;
 
-class BarangImport implements ToModel, WithMappedCells
+class BarangImport implements ToModel, WithHeadingRow
 {
-    public function mapping(): array
-    {
-        return [
-            'kode'          => 'B1',
-            'nama_barang'   => 'C1',
-            'jenis_id'      => 'D1',
-            'size'          => 'E1',
-            'stok_minimum'  => 'F1',
-            'stok_maximum'  => 'G1',
-            'stok'          => 'H1',
-            'supplier' => 'I1',
-            'harga'         => 'J1'
-        ];
-    }
 
     public function model(array $row)
     {

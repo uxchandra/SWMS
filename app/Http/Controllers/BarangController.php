@@ -206,12 +206,26 @@ class BarangController extends Controller
         }
 
         try {
-            Excel::import(new BarangImport, $request->file('file'));
+            $import = new BarangImport();
+            $result = Excel::import($import, $request->file('file'));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Data Berhasil Diimport!'
             ]);
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = 'Row ' . $failure->row() . ': ' . implode(', ', $failure->errors());
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation Errors',
+                'errors' => $errorMessages
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

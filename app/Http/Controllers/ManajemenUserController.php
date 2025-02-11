@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -21,13 +22,14 @@ class ManajemenUserController extends Controller
     {
         return view('data-pengguna.index', [
             'penggunas' => User::all(),
-            'roles'     => Role::all()
+            'roles'     => Role::all(),
+            'departments' => Department::all()
         ]);
     }
 
     public function getDataPengguna()
     {
-        $penggunas = User::with('role')->get();
+        $penggunas = User::with(['role', 'department'])->get();
 
         return response()->json([
             'success'   => true,
@@ -54,13 +56,15 @@ class ManajemenUserController extends Controller
             'name'      => 'required',
             'username'     => 'required',
             'password'  => 'required|min:1',
-            'role_id'   => 'required'
+            'role_id'   => 'required',
+            'department_id' => 'required'
         ], [
             'name.required'     => 'Form Nama Wajib Di isi !',
             'username.required'    => 'Form Username Wajib Di isi !',
             'password.required' => 'Form Password Wajib Di isi !',
             'password.min'      => 'Password Minimal 4 Huruf/Angka/Karakter !',
             'role_id.required'  => 'Tentukan Role/Hak Akses !',
+            'department_id.required' => 'Pilih Departemen !'
         ]);
 
         if ($validator->fails()) {
@@ -68,11 +72,11 @@ class ManajemenUserController extends Controller
         }
 
         $pengguna = User::create([
-            'name'      => $request->name,
-            'username'     => $request->username,
-            'password'  => Hash::make($request->password),
-            'plain_password' => Crypt::encryptString($request->password),
-            'role_id'   => $request->role_id
+            'name'          => $request->name,
+            'username'      => $request->username,
+            'password'      => Hash::make($request->password),
+            'role_id'       => $request->role_id,
+            'department_id' => $request->department_id
         ]);
 
         return response()->json([
@@ -111,13 +115,15 @@ class ManajemenUserController extends Controller
         $pengguna = User::find($id);
 
         $validator = Validator::make($request->all(), [
-            'name'      => 'required',
-            'username'     => 'required',
-            'role_id'   => 'required'
+            'name'          => 'required',
+            'username'      => 'required',
+            'role_id'       => 'required',
+            'department_id' => 'required'
         ], [
             'name.required'     => 'Form Nama Wajib Di isi !',
-            'username.required'    => 'Form Username Wajib Di isi !',
+            'username.required' => 'Form Username Wajib Di isi !',
             'role_id.required'  => 'Tentukan Role/Hak Akses !',
+            'department_id.required' => 'Pilih Departemen !'
         ]);
 
         if ($validator->fails()) {
@@ -125,9 +131,10 @@ class ManajemenUserController extends Controller
         }
 
         $userData = [
-            'name'      => $request->name,
-            'username'     => $request->username,
-            'role_id'   => $request->role_id
+            'name'          => $request->name,
+            'username'      => $request->username,
+            'role_id'       => $request->role_id,
+            'department_id' => $request->department_id
         ];
 
         // Cek apakah password diubah atau tidak
@@ -174,6 +181,13 @@ class ManajemenUserController extends Controller
         $roles = Role::all();
 
         return response()->json($roles);
+    }
+
+    public function getDepartment()
+    {
+        $departments = Department::all();
+
+        return response()->json($departments);
     }
 
     public function import(Request $request)

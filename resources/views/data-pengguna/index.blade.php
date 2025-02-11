@@ -29,6 +29,7 @@
                                     <th>Nama</th>
                                     <th>Username</th>
                                     <th>Role</th>
+                                    <th>Department</th>
                                     <th>Opsi</th>
                                 </tr>
                             </thead>
@@ -68,6 +69,7 @@
                     { data: 'name' },
                     { data: 'username' },
                     { data: 'role.role' },
+                    { data: 'department.nama_departemen' },
                     {
                         data: null,
                         render: function(data, type, row) {
@@ -129,6 +131,7 @@
             let username = $('#username').val();
             let password = $('#password').val();
             let role_id = $('#role_id').val();
+            let department_id = $('#department_id').val();
             let token = $("meta[name='csrf-token']").attr("content");
 
             let formData = new FormData();
@@ -136,6 +139,7 @@
             formData.append('username', username);
             formData.append('password', password);
             formData.append('role_id', role_id);
+            formData.append('department_id', department_id);
             formData.append('_token', token);
 
             $.ajax({
@@ -174,6 +178,7 @@
                                 <td>${value.name}</td>
                                 <td>${value.username}</td>
                                 <td>${role}</td>
+                                <td>${value.department.nama_departemen}</td>
                                 <td>
                                     <a href="javascript:void(0)" id="button_edit_pengguna" data-id="${value.id}" class="btn btn-icon btn-warning btn-lg mb-2"><i class="far fa-edit"></i> </a>
                                     <a href="javascript:void(0)" id="button_hapus_pengguna" data-id="${value.id}" class="btn btn-icon btn-danger btn-lg mb-2"><i class="fas fa-trash"></i> </a>
@@ -189,6 +194,7 @@
                             $('#username').val('');
                             $('#password').val('');
                             $('#role_id').val('');
+                            $('#department_id').val('');
 
                             $('#modal_tambah_pengguna').modal('hide');
 
@@ -263,6 +269,7 @@
                     $('#edit_username').val(response.data.username);
                     $('#edit_password').val(response.data.password);
                     $('#edit_role_id').val(response.data.role_id);
+                    $('#edit_department_id').val(response.data.department_id);
 
                     $('#modal_edit_pengguna').modal('show');
                 }
@@ -278,6 +285,7 @@
             let username = $('#edit_username').val();
             let password = $('#edit_password').val();
             let role_id = $('#edit_role_id').val();
+            let department_id = $('#edit_department_id').val();
             let token = $("meta[name='csrf-token']").attr("content");
 
 
@@ -286,6 +294,7 @@
             formData.append('name', name);
             formData.append('username', username);
             formData.append('role_id', role_id);
+            formData.append('department_id', department_id);
             formData.append('_token', token);
             formData.append('_method', 'PUT');
 
@@ -330,6 +339,7 @@
                                     <td>${value.name}</td>
                                     <td>${value.username}</td>
                                     <td>${role}</td>
+                                    <td>${value.department.nama_departemen}</td>
                                     <td>
                                         <a href="javascript:void(0)" id="button_edit_pengguna" data-id="${value.id}" class="btn btn-icon btn-warning btn-lg mb-2"><i class="far fa-edit"></i> </a>
                                         <a href="javascript:void(0)" id="button_hapus_pengguna" data-id="${value.id}" class="btn btn-icon btn-danger btn-lg mb-2"><i class="fas fa-trash"></i> </a>
@@ -345,6 +355,7 @@
                             $('#username').val('');
                             $('#password').val('');
                             $('#role_id').val('');
+                            $('#department_id').val();
 
                             $('#modal_edit_pengguna').modal('hide');
 
@@ -444,6 +455,7 @@
                                             <td>${value.name}</td>
                                             <td>${value.username}</td>
                                             <td>${role}</td>
+                                            <td>${value.department.nama_departemen}</td>
                                             <td>
                                                 <a href="javascript:void(0)" id="button_edit_pengguna" data-id="${value.id}" class="btn btn-icon btn-warning btn-lg mb-2"><i class="far fa-edit"></i> </a>
                                                 <a href="javascript:void(0)" id="button_hapus_pengguna" data-id="${value.id}" class="btn btn-icon btn-danger btn-lg mb-2"><i class="fas fa-trash"></i> </a>

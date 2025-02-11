@@ -101,92 +101,74 @@ class BarangController extends Controller
         ]);
     }
 
+    public function edit(Barang $barang)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Edit Data Barang',
+            'data'    => $barang
+        ]);
+    }
+
     public function update(Request $request, Barang $barang)
     {
         $validator = Validator::make($request->all(), [
+            'kode'          => 'required|string|max:15|unique:barangs,kode,' . $barang->id,
             'nama_barang'   => 'required',
-            'deskripsi'     => 'required',
-            'gambar'        => 'nullable|mimes:jpeg,png,jpg',
-            'stok_minimum'  => 'required|numeric',
             'jenis_id'      => 'required',
-            'satuan_id'      => 'required',
-            'kode_barang'   => 'required|string|max:15|unique:barangs,kode_barang,'
+            'size'          => 'required|string|max:10',
+            'stok_minimum'  => 'required|numeric',
+            'stok_maximum'  => 'required|numeric',
+            'stok'          => 'nullable|numeric',
+            'nama_supplier' => 'required|string|max:100',
+            'price'         => 'required|numeric',
         ], [
+            'kode.required'         => 'Form Kode Barang Wajib Di Isi !',
+            'kode.unique'           => 'Kode Barang Sudah Terdaftar !',
             'nama_barang.required'  => 'Form Nama Barang Wajib Di Isi !',
-            'deskripsi.required'    => 'Form Deskripsi Wajib Di Isi !',
-            'gambar.mimes'          => 'Gunakan Gambar Yang Memiliki Format jpeg, png, jpg !',
+            'jenis_id.required'     => 'Pilih Jenis Barang !',
+            'size.required'         => 'Form Size Wajib Di Isi !',
             'stok_minimum.required' => 'Form Stok Minimum Wajib Di Isi !',
             'stok_minimum.numeric'  => 'Gunakan Angka Untuk Mengisi Form Ini !',
-            'jenis_id.required'     => 'Pilih Jenis Barang !',
-            'satuan_id.required'    => 'Pilih Satuan Barang !',
-            'kode_barang.required'   => 'Form Kode Barang Wajib Di Isi !',
-            'kode_barang.unique'     => 'Kode Barang Sudah Terdaftar !',
+            'stok_maximum.required' => 'Form Stok Maksimum Wajib Di Isi !',
+            'stok_maximum.numeric'  => 'Gunakan Angka Untuk Mengisi Form Ini !',
+            'stok.numeric'          => 'Gunakan Angka Untuk Mengisi Form Ini !',
+            'nama_supplier.required'=> 'Form Nama Supplier Wajib Di Isi !',
+            'price.required'        => 'Form Harga Wajib Di Isi !',
+            'price.numeric'         => 'Gunakan Angka Untuk Mengisi Form Harga !',
         ]);
-    
-        // cek apakah gambar diubah atau tidak
-        if($request->hasFile('gambar')){
-            // hapus gambar lama
-            if($barang->gambar) {
-                unlink('.'.Storage::url($barang->gambar));
-            }
-            $path       = 'gambar-barang/';
-            $file       = $request->file('gambar');
-            $fileName   = $file->getClientOriginalName();
-            $gambar     = $file->storeAs($path, $fileName, 'public');
-            $path      .= $fileName; 
-        } else {
-            // jika tidak ada file gambar, gunakan gambar lama
-            $validator = Validator::make($request->all(), [
-                'nama_barang'   => 'required',
-                'deskripsi'     => 'required',
-                'stok_minimum'  => 'required|numeric',
-                'jenis_id'      => 'required',
-                'satuan_id'      => 'required',
-                'kode_barang'   => 'required|string|max:15|unique:barangs,kode_barang,' . $barang->id
-            ], [
-                'nama_barang.required'  => 'Form Nama Barang Wajib Di Isi !',
-                'deskripsi.required'    => 'Form Deskripsi Wajib Di Isi !',
-                'stok_minimum.required' => 'Form Stok Minimum Wajib Di Isi !',
-                'stok_minimum.numeric'  => 'Gunakan Angka Untuk Mengisi Form Ini !',
-                'jenis_id.required'     => 'Pilih Jenis Barang !',
-                'satuan_id.required'    => 'Pilih Satuan Barang !',
-                'kode_barang.required'   => 'Form Kode Barang Wajib Di Isi !',
-                'kode_barang.unique'     => 'Kode Barang Sudah Terdaftar !',
-            ]);
 
-            $path = $barang->gambar;
-        } 
-        
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-    
+
+        // Update data barang tanpa gambar
         $barang->update([
+            'kode'          => $request->kode,
             'nama_barang'   => $request->nama_barang,
-            'stok_minimum'  => $request->stok_minimum, 
-            'deskripsi'     => $request->deskripsi,
-            'user_id'       => Auth::user()->id,
-            'gambar'        => $path,
             'jenis_id'      => $request->jenis_id,
-            'satuan_id'     => $request->satuan_id,
-            'kode_barang'   => $request->kode_barang
+            'size'          => $request->size,
+            'stok_minimum'  => $request->stok_minimum,
+            'stok_maximum'  => $request->stok_maximum,
+            'stok'          => $request->stok ?? 0,  // Default 0 jika null
+            'nama_supplier' => $request->nama_supplier,
+            'price'         => $request->price,
         ]);
-    
+
         return response()->json([
             'success'   => true,
             'message'   => 'Data Berhasil Terupdate',
             'data'      => $barang
         ]);
     }
+
     
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Barang $barang)
-    {
-        unlink('.'.Storage::url($barang->gambar));
-    
+    { 
         Barang::destroy($barang->id);
 
         return response()->json([
@@ -207,11 +189,15 @@ class BarangController extends Controller
 
         try {
             $import = new BarangImport();
-            $result = Excel::import($import, $request->file('file'));
+            Excel::import($import, $request->file('file'));
+
+            // Ambil data terbaru setelah import
+            $barangs = Barang::with('jenis')->get();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data Berhasil Diimport!'
+                'message' => 'Data Berhasil Diimport!',
+                'data' => $barangs
             ]);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();

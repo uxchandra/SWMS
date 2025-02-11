@@ -7,10 +7,10 @@ use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\JenisController;
-use App\Models\Department;
+use App\Http\Controllers\BarangMasukController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/data-pengguna/get-data', [ManajemenUserController::class, 'getDataPengguna']);
     Route::get('/api/role/', [ManajemenUserController::class, 'getRole']);
+    Route::get('/api/department/', [ManajemenUserController::class, 'getDepartment']);
     Route::post('/data-pengguna/import', [ManajemenUserController::class, 'import'])->name('data-pengguna.import');
     Route::resource('/data-pengguna', ManajemenUserController::class);
     
@@ -39,6 +40,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/department/get-data', [DepartmentController::class, 'getDataDepartment']);
     Route::resource('/department', DepartmentController::class);
+
+    Route::get('/barang-masuk/create', [BarangMasukController::class, 'create'])->name('barang-masuk.create');
+    Route::get('/barang/kode/{kode}', [BarangMasukController::class, 'getBarangByKode'])->name('barang.getByKode');
+
+    Route::get('/barang-masuk/get-data', [BarangMasukController::class, 'getDataBarangMasuk']);
+    Route::resource('/barang-masuk', BarangMasukController::class);
+
+    Route::get('/barang-masuk/create', [BarangMasukController::class, 'create'])->name('barang-masuk.create');
 });
 
 require __DIR__.'/auth.php';

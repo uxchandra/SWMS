@@ -29,6 +29,7 @@
                                     <th>Nama Barang</th>
                                     <th>Jenis</th>
                                     <th>Stok Min.</th>
+                                    <th>Stok Max.</th>
                                     <th>Stok</th>
                                     <th>Opsi</th>
                                 </tr>
@@ -42,77 +43,95 @@
         </div>
     </div>
 
-    <!-- Datatables Jquery -->
     <script>
-        $(document).ready(function() {
-            $('#table_id').DataTable({
-                paging: true
-            });
-
-            $.ajax({
-                url: "/barang/get-data",
-                type: "GET",
-                dataType: 'JSON',
-                success: function(response) {
-                    let counter = 1;
-                    $('#table_id').DataTable().clear();
-                    $.each(response.data, function(key, value) {
-                        let stok = value.stok != null ? value.stok : "Stok Kosong";
-                        let jenisNama = value.jenis ? value.jenis.jenis_barang : 'Tidak ada jenis';
-                        let barang = `
-                <tr class="barang-row" id="index_${value.id}">
-                    <td>${value.kode}</td>
-                    <td>${value.nama_barang}</td>
-                    <td>${jenisNama}</td>
-                    <td>${value.stok_minimum}</td>
-                    <td>${stok}</td>
-                    <td>
-                        <a href="javascript:void(0)" id="button_detail_barang" data-id="${value.id}" class="btn btn-icon btn-success btn-lg mb-2"><i class="far fa-eye"></i> </a>
+        function loadData() {
+        $.ajax({
+            url: "/barang/get-data",
+            type: "GET",
+            dataType: 'JSON',
+            success: function(response) {
+                let table = $('#table_id').DataTable();
+                table.clear();
+                
+                $.each(response.data, function(key, value) {
+                    let stok = value.stok != null ? value.stok : "Stok Kosong";
+                    let jenisNama = value.jenis ? value.jenis.jenis_barang : 'Tidak ada jenis';
+                    
+                    table.row.add([
+                        value.kode,
+                        value.nama_barang,
+                        jenisNama,
+                        value.stok_minimum,
+                        value.stok_maximum,
+                        stok,
+                        `<a href="javascript:void(0)" id="button_detail_barang" data-id="${value.id}" class="btn btn-icon btn-success btn-lg mb-2"><i class="far fa-eye"></i> </a>
                         <a href="javascript:void(0)" id="button_edit_barang" data-id="${value.id}" class="btn btn-icon btn-warning btn-lg mb-2"><i class="far fa-edit"></i> </a>
-                        <a href="javascript:void(0)" id="button_hapus_barang" data-id="${value.id}" class="btn btn-icon btn-danger btn-lg mb-2"><i class="fas fa-trash"></i> </a>
-                    </td>
-                </tr>
-            `;
-                        $('#table_id').DataTable().row.add($(barang)).draw(false);
-                    });
-                }
-            });
+                        <a href="javascript:void(0)" id="button_hapus_barang" data-id="${value.id}" class="btn btn-icon btn-danger btn-lg mb-2"><i class="fas fa-trash"></i> </a>`
+                    ]).draw(false);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading data:', error);
+            }
         });
+    }
     </script>
 
-
-    <!-- Show Modal Import Data -->
+    <!-- Datatables Jquery -->
     <script>
+       $(document).ready(function() {
+        // Inisialisasi DataTable
+        let table = $('#table_id').DataTable({
+            processing: true,
+            // Hapus definisi columns karena kita menggunakan array untuk menambahkan data
+            // bukan object dengan properti yang sesuai dengan data
+        });
+        
+        loadData();
+
         $('body').on('click', '#button_import', function() {
             $('#modal_import').modal('show');
         });
-
-        $('#importForm').submit(function(e) {
+        
+        // Handle form import submit
+        $('#importForm').on('submit', function(e) {
             e.preventDefault();
-            
             let formData = new FormData(this);
             
             $.ajax({
                 url: '/barang/import',
                 type: 'POST',
                 data: formData,
-                contentType: false,
                 processData: false,
+                contentType: false,
                 success: function(response) {
-                    if(response.success) {
-                        Swal.fire('Berhasil!', response.message, 'success');
+                    if (response.success) {
+                        // Tutup modal
                         $('#modal_import').modal('hide');
-                        // Refresh table
-                        $('#table_id').DataTable().ajax.reload();
+                        
+                        // Reset form
+                        $('#importForm')[0].reset();
+                        
+                        // Tampilkan pesan sukses
+                        Swal.fire('Sukses!', response.message, 'success');
+                        
+                        // Reload data
+                        loadData();
                     }
                 },
                 error: function(xhr) {
                     let errors = xhr.responseJSON;
-                    Swal.fire('Error!', 'Terjadi kesalahan saat import data', 'error');
+                    if (errors && errors.errors) {
+                        Swal.fire('Error!', errors.errors.join('\n'), 'error');
+                    } else {
+                        Swal.fire('Error!', 'Terjadi kesalahan saat import data', 'error');
+                    }
                 }
             });
         });
+    });
     </script>
+
 
     <!-- Show Modal Tambah Barang -->
     <script>
@@ -284,152 +303,117 @@
         // Menampilkan Form Modal Edit
         $('body').on('click', '#button_edit_barang', function() {
             let barang_id = $(this).data('id');
-
+    
             $.ajax({
                 url: `/barang/${barang_id}/edit`,
                 type: "GET",
                 cache: false,
                 success: function(response) {
                     $('#barang_id').val(response.data.id);
-                    $('#edit_gambar').val(null);
                     $('#edit_kode').val(response.data.kode);
                     $('#edit_nama_barang').val(response.data.nama_barang);
-                    $('#edit_stok_minimum').val(response.data.stok_minimum);
                     $('#edit_jenis_id').val(response.data.jenis_id);
-                    $('#edit_satuan_id').val(response.data.satuan_id);
-                    $('#edit_deskripsi').val(response.data.deskripsi);
-                    $('#edit_gambar_preview').attr('src', '/storage/' + response.data.gambar);
-
+                    $('#edit_size').val(response.data.size);
+                    $('#edit_stok_minimum').val(response.data.stok_minimum);
+                    $('#edit_stok_maximum').val(response.data.stok_maximum);
+                    $('#edit_stok').val(response.data.stok != null ? response.data.stok : 'Stok Kosong');
+                    $('#edit_nama_supplier').val(response.data.nama_supplier);
+                    $('#edit_price').val(response.data.price);
+    
                     $('#modal_edit_barang').modal('show');
                 }
             });
         });
-
+    
         // Proses Update Data
         $('#update').click(function(e) {
             e.preventDefault();
-
+    
             let barang_id = $('#barang_id').val();
-            let gambar = $('#edit_gambar')[0].files[0];
-            let nama_barang = $('#edit_nama_barang').val();
-            let stok_minimum = $('#edit_stok_minimum').val();
-            let deskripsi = $('#edit_deskripsi').val();
-            let jenis_id = $('#edit_jenis_id').val();
-            let satuan_id = $('#edit_satuan_id').val();
             let kode = $('#edit_kode').val();
+            let nama_barang = $('#edit_nama_barang').val();
+            let jenis_id = $('#edit_jenis_id').val();
+            let size = $('#edit_size').val();
+            let stok_minimum = $('#edit_stok_minimum').val();
+            let stok_maximum = $('#edit_stok_maximum').val();
+            let stok = $('#edit_stok').val();
+            let nama_supplier = $('#edit_nama_supplier').val();
+            let price = $('#edit_price').val();
             let token = $("meta[name='csrf-token']").attr("content");
-
-
-            // Buat objek FormData
-            let formData = new FormData();
-            formData.append('gambar', gambar);
-            formData.append('nama_barang', nama_barang);
-            formData.append('stok_minimum', stok_minimum);
-            formData.append('deskripsi', deskripsi);
-            formData.append('jenis_id', jenis_id);
-            formData.append('satuan_id', satuan_id);
-            formData.append('kode', kode);
-            formData.append('_token', token);
-            formData.append('_method', 'PUT');
-
+    
+            let formData = {
+                _token: token,
+                _method: 'PUT',
+                kode: kode,
+                nama_barang: nama_barang,
+                jenis_id: jenis_id,
+                size: size,
+                stok_minimum: stok_minimum,
+                stok_maximum: stok_maximum,
+                stok: stok,
+                nama_supplier: nama_supplier,
+                price: price
+            };
+    
             $.ajax({
                 url: `/barang/${barang_id}`,
                 type: "POST",
-                cache: false,
                 data: formData,
-                contentType: false,
-                processData: false,
-
+    
                 success: function(response) {
                     Swal.fire({
-                        type: 'success',
                         icon: 'success',
                         title: `${response.message}`,
                         showConfirmButton: true,
                         timer: 3000
                     });
-
-                    let row = $(`#index_${response.data.id}`);
-                    let rowData = row.find('td');
-
-                    // Memperbarui data pada kolom nomor urutan (indeks 0)
-                    rowData.eq(0).text(row.index() + 1);
-
-                    // Memperbarui data pada kolom gambar (indeks 1)
-                    let imageColumn = rowData.eq(1).find('img');
-                    imageColumn.attr('src', `/storage/${response.data.gambar}`);
-
-                    // Memperbarui data pada kolom kode barang (indeks 2)
-                    rowData.eq(2).text(response.data.kode);
-
-                    // Memperbarui data pada kolom nama barang (indeks 3)
-                    rowData.eq(3).text(response.data.nama_barang);
-
-                    // Memperbarui data pada kolom stok (indeks 4)
-                    let stok = response.data.stok != null ? response.data.stok : "Stok Kosong";
-                    rowData.eq(4).text(stok);
-
+    
+                    loadData();
+    
                     $('#modal_edit_barang').modal('hide');
                 },
-
+    
                 error: function(error) {
-                    if (error.responseJSON && error.responseJSON.gambar && error.responseJSON.gambar[
-                            0]) {
-                        $('#alert-gambar').removeClass('d-none');
-                        $('#alert-gambar').addClass('d-block');
-
-                        $('#alert-gambar').html(error.responseJSON.gambar[0]);
-                    }
-
-                    if (error.responseJSON && error.responseJSON.nama_barang && error.responseJSON
-                        .nama_barang[0]) {
-                        $('#alert-nama_barang').removeClass('d-none');
-                        $('#alert-nama_barang').addClass('d-block');
-
-                        $('#alert-nama_barang').html(error.responseJSON.nama_barang[0]);
-                    }
-
-                    if (error.responseJSON && error.responseJSON.stok_minimum && error.responseJSON
-                        .stok_minimum[0]) {
-                        $('#alert-stok_minimum').removeClass('d-none');
-                        $('#alert-stok_minimum').addClass('d-block');
-
-                        $('#alert-stok_minimum').html(error.responseJSON.stok_minimum[0]);
-                    }
-
-                    if (error.responseJSON && error.responseJSON.jenis_id && error.responseJSON
-                        .jenis_id[0]) {
-                        $('#alert-jenis_id').removeClass('d-none');
-                        $('#alert-jenis_id').addClass('d-block');
-
-                        $('#alert-jenis_id').html(error.responseJSON.jenis_id[0]);
-                    }
-
-                    if (error.responseJSON && error.responseJSON.satuan_id && error.responseJSON
-                        .satuan_id[0]) {
-                        $('#alert-satuan_id').removeClass('d-none');
-                        $('#alert-satuan_id').addClass('d-block');
-
-                        $('#alert-satuan_id').html(error.responseJSON.satuan_id[0]);
-                    }
-
-                    if (error.responseJSON && error.responseJSON.deskripsi && error.responseJSON
-                        .deskripsi[0]) {
-                        $('#alert-deskripsi').removeClass('d-none');
-                        $('#alert-deskripsi').addClass('d-block');
-
-                        $('#alert-deskripsi').html(error.responseJSON.deskripsi[0]);
-                    }
-
-                    if (error.responseJSON && error.responseJSON.kode && error.responseJSON.kode[0]) { // Menambahkan penanganan kesalahan untuk kode
-                        $('#alert-kode').removeClass('d-none');
-                        $('#alert-kode').addClass('d-block');
-                        $('#alert-kode').html(error.responseJSON.kode[0]);
+                    if (error.responseJSON) {
+                        let errors = error.responseJSON;
+                        
+                        if (errors.kode) {
+                            $('#alert-kode').removeClass('d-none').addClass('d-block').html(errors.kode[0]);
+                        }
+    
+                        if (errors.nama_barang) {
+                            $('#alert-nama_barang').removeClass('d-none').addClass('d-block').html(errors.nama_barang[0]);
+                        }
+    
+                        if (errors.jenis_id) {
+                            $('#alert-jenis_id').removeClass('d-none').addClass('d-block').html(errors.jenis_id[0]);
+                        }
+    
+                        if (errors.size) {
+                            $('#alert-size').removeClass('d-none').addClass('d-block').html(errors.size[0]);
+                        }
+    
+                        if (errors.stok_minimum) {
+                            $('#alert-stok_minimum').removeClass('d-none').addClass('d-block').html(errors.stok_minimum[0]);
+                        }
+    
+                        if (errors.stok_maximum) {
+                            $('#alert-stok_maximum').removeClass('d-none').addClass('d-block').html(errors.stok_maximum[0]);
+                        }
+    
+                        if (errors.nama_supplier) {
+                            $('#alert-nama_supplier').removeClass('d-none').addClass('d-block').html(errors.nama_supplier[0]);
+                        }
+    
+                        if (errors.price) {
+                            $('#alert-price').removeClass('d-none').addClass('d-block').html(errors.price[0]);
+                        }
                     }
                 }
-            })
-        })
+            });
+        });
     </script>
+    
 
     <!-- Hapus Data Barang -->
     <script>
@@ -471,27 +455,8 @@
                                 type: "GET",
                                 dataType: 'JSON',
                                 success: function(response) {
-                                    let counter = 1;
-                                    $.each(response.data, function(key, value) {
-                                        let stok = value.stok != null ?
-                                            value.stok : "Stok Kosong";
-                                        let barang = `
-                                        <tr class="barang-row" id="index_${value.id}">
-                                            <td>${counter++}</td>
-                                            <td><img src="/storage/${value.gambar}" alt="gambar Barang" style="width: 150px"; height="150px"></td>
-                                            <td>${value.kode}</td>
-                                            <td>${value.nama_barang}</td>
-                                            <td>${stok}</td>
-                                            <td>
-                                                <a href="javascript:void(0)" id="button_detail_barang" data-id="${value.id}" class="btn btn-icon btn-success btn-lg mb-2"><i class="far fa-eye"></i> </a>
-                                                <a href="javascript:void(0)" id="button_edit_barang" data-id="${value.id}" class="btn btn-icon btn-warning btn-lg mb-2"><i class="far fa-edit"></i> </a>
-                                                <a href="javascript:void(0)" id="button_hapus_barang" data-id="${value.id}" class="btn btn-icon btn-danger btn-lg mb-2"><i class="fas fa-trash"></i> </a>
-                                            </td>
-                                        </tr>
-                                    `;
-                                        $('#table_id').DataTable().row.add(
-                                            $(barang)).draw(false);
-                                    });
+                                    loadData();
+                                    
                                 }
                             });
                         }

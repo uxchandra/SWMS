@@ -34,7 +34,17 @@
                     @endforeach
                   </select>
                   <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-role"></div>
-              </div>
+            </div>
+            <div class="form-group">
+              <label>Pilih Department</label>
+                <select class="form-control" name="role" id="role_id" style="width: 100%">
+                  <option selected>Pilih Department</option>
+                  @foreach ($departments as $department)
+                    <option value="{{ $department->id }}">{{ $department->nama_departemen }}</option>
+                  @endforeach
+                </select>
+                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-role"></div>
+            </div>
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button type="button" class="btn btn-dark" data-dismiss="modal">Keluar</button>

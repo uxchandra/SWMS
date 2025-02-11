@@ -4,18 +4,19 @@
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
   <title>Warehouse Management System</title>
 
   <!-- General CSS Files -->
-  <link rel="stylesheet" href="assets/modules/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="assets/modules/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/modules/fontawesome/css/all.min.css') }}">
 
   <!-- CSS Libraries -->
 
   <!-- Template CSS -->
   
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
 
   <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
   
@@ -54,7 +55,7 @@
         </form>
         <ul class="navbar-nav navbar-right">
           <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-            <img alt="image" src="assets/img/avatar/avatar-1.png" class="rounded-circle mr-1">
+            <img alt="image" src="{{ asset('assets/img/avatar/avatar-1.png') }}" class="rounded-circle mr-1">
             <div class="d-sm-none d-lg-inline-block text-dark">Hi, {{ auth()->user()->name }}</div></a>
             <div class="dropdown-menu dropdown-menu-right">
                   <a class="dropdown-item" href="{{ route('logout') }}"
@@ -86,12 +87,12 @@
         <aside id="sidebar-wrapper ">
 
           <div class="sidebar-brand">
-            <img src="images/imagee.png" alt="Logo SIMPLER" style="height: 35px; width: auto; margin-right: 10px; margin-top: 20px">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo STEP" style="height: 50px; width: auto; margin-right: 10px; margin-top: 20px; margin-bottom: 40px">
           </div>
 
           <ul class="sidebar-menu"> 
              
-              <li class="sidebar-item">
+              <li class="sidebar-item mt-4">
                 <a class="nav-link {{ Request::is('/') || Request::is('dashboard') ? 'active' : '' }}" href="/dashboard">
                   <i class="fas fa-fire"></i> <span class="align-middle">Dashboard</span>
                 </a>
@@ -102,15 +103,15 @@
                 <li><a class="nav-link {{ Request::is('jenis-barang') ? 'active' : '' }}" href="/jenis-barang"><i class="fas fa-list"></i><span>Kategori</span></a></li>
                 <li><a class="nav-link {{ Request::is('department') ? 'active' : '' }}" href="/department"><i class="fas fa-thin fa-building"></i><span>Departemen</span></a></li>
 
-              {{-- <li class="menu-header">MANAJEMEN BARANG</li>
-              <li><a class="nav-link {{ Request::is('barang-masuk') ? 'active' : '' }}" href="barang-masuk"><i class="fa fa-solid fa-arrow-right"></i><span>Barang Masuk</span></a></li>
+              <li class="menu-header">MANAJEMEN BARANG</li>
+              <li><a class="nav-link {{ Request::is('barang-masuk') ? 'active' : '' }}" href="/barang-masuk"><i class="fa fa-solid fa-arrow-right"></i><span>Barang Masuk</span></a></li>
               <li><a class="nav-link {{ Request::is('barang-keluar') ? 'active' : '' }}" href="barang-keluar"><i class="fa fa-sharp fa-solid fa-arrow-left"></i> <span>Barang Keluar</span></a></li>
               <li><a class="nav-link {{ Request::is('permintaan-produk') ? 'active' : '' }}" href="permintaan-produk"><i class="fa fa-sharp fa-solid fa-clipboard-list"></i> <span>Permintaan Barang</span></a></li>
             
-              <li class="menu-header">LAPORAN</li>
+              {{-- <li class="menu-header">LAPORAN</li>
               <li><a class="nav-link {{ Request::is('laporan-stok') ? 'active' : '' }}" href="laporan-stok"><i class="fa fa-sharp fa-reguler fa-file"></i><span>Stok</span></a></li>
               <li><a class="nav-link {{ Request::is('laporan-barang-masuk') ? 'active' : '' }}" href="laporan-barang-masuk"><i class="fa fa-regular fa-file-import"></i><span>Barang Masuk</span></a></li>
-              <li><a class="nav-link {{ Request::is('laporan-barang-keluar') ? 'active' : '' }}" href="laporan-barang-keluar"><i class="fa fa-sharp fa-regular fa-file-export"></i><span>Barang Keluar</span></a></li> --}}
+              <li><a class="nav-link {{ Request::is('laporan-barang-keluar') ? 'active' : '' }}" href="laporan-barang-keluar"><i class="fa fa-sharp fa-regular fa-file-export"></i><span>Barang Keluar</span></a></li> --}} 
               
               <li class="menu-header">MANAJEMEN USER</li>
               <li><a class="nav-link {{ Request::is('data-pengguna') ? 'active' : '' }}" href="data-pengguna"><i class="fa fa-solid fa-users"></i><span>Daftar Pengguna</span></a></li>
@@ -142,13 +143,13 @@
 
   
   <!-- General JS Scripts -->
-  <script src="assets/modules/jquery.min.js"></script>
-  <script src="assets/modules/popper.js"></script>
-  <script src="assets/modules/tooltip.js"></script>
-  <script src="assets/modules/bootstrap/js/bootstrap.min.js"></script>
-  <script src="assets/modules/nicescroll/jquery.nicescroll.min.js"></script>
-  <script src="assets/modules/moment.min.js"></script>
-  <script src="assets/js/stisla.js"></script>
+  <script src="{{ asset('assets/modules/jquery.min.js') }}"></script>
+  <script src="{{ asset('assets/modules/popper.js') }}"></script>
+  <script src="{{ asset('assets/modules/tooltip.js') }}"></script>
+  <script src="{{ asset('assets/modules/bootstrap/js/bootstrap.min.js') }}"></script>
+  <script src="{{ asset('assets/modules/nicescroll/jquery.nicescroll.min.js') }}"></script>
+  <script src="{{ asset('assets/modules/moment.min.js') }}"></script>
+  <script src="{{ asset('assets/js/stisla.js') }}"></script>
 
   <!-- JS Libraies -->
   
@@ -160,8 +161,8 @@
   <!-- Page Specific JS File -->
   
   <!-- Template JS File -->
-  <script src="assets/js/scripts.js"></script>
-  <script src="assets/js/custom.js"></script>
+  <script src="{{ asset('assets/js/scripts.js') }}"></script>
+  <script src="{{ asset('assets/js/custom.js') }}"></script>
 
   <!-- Datatables Jquery -->
   <script type="text/javascript" src="//cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>

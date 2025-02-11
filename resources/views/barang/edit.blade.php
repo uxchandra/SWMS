@@ -15,18 +15,9 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label>Gambar</label>
-                <input type="file" class="form-control" name="gambar" id="edit_gambar" onchange="previewImageEdit()">
-                <img src="" class="img-preview img-fluid my-1" id="edit_gambar_preview" style="max-height: 275px; overflow:hidden; border: 1px solid black;">
-                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-gambar"></div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group">
                 <label>Kode Barang</label>
-                <input type="text" class="form-control" name="kode_barang" id="edit_kode_barang">
-                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kode_barang"></div>
+                <input type="text" class="form-control" name="kode" id="edit_kode">
+                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-kode"></div>
               </div>
 
               <div class="form-group">
@@ -34,7 +25,7 @@
                 <input type="text" class="form-control" name="nama_barang" id="edit_nama_barang">
                 <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-nama_barang"></div>
               </div>
-              
+
               <div class="form-group">
                 <label>Jenis Barang</label>
                 <select class="form-control" name="jenis_id" id="edit_jenis_id">
@@ -49,15 +40,35 @@
               </div>
 
               <div class="form-group">
+                <label>Size</label>
+                <input type="text" class="form-control" name="size" id="edit_size">
+                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-size"></div>
+              </div>
+
+              <div class="form-group">
+                <label>Supplier</label>
+                <input type="text" class="form-control" name="nama_supplier" id="edit_nama_supplier">
+                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-nama_supplier"></div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
                 <label>Stok Minimum</label>
                 <input type="number" class="form-control" name="stok_minimum" id="edit_stok_minimum">
                 <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-stok_minimum"></div>
               </div>
+
+              <div class="form-group">
+                <label>Stok Maksimum</label>
+                <input type="number" class="form-control" name="stok_maximum" id="edit_stok_maximum">
+                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-stok_maximum"></div>
+              </div>
               
               <div class="form-group">
-                <label>Deskripsi</label>
-                <textarea class="form-control" name="deskripsi" id="edit_deskripsi"></textarea>
-                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-deskripsi"></div>
+                <label>Harga</label>
+                <input type="number" class="form-control" name="price" id="edit_price">
+                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-price"></div>
               </div>
             </div>
           </div>

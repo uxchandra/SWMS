@@ -39,6 +39,19 @@
                   </select>
                   <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-role"></div>
             </div>
+            <div class="form-group">
+              <label>Pilih Department</label>
+                <select class="form-control" name="role" id="edit_department_id" style="width: 100%">
+                  @foreach ($departments as $department)
+                      @if (old('department_id', $department->nama_departemen) == $department->id)
+                      <option value="{{ $department->id }}" selected>{{ $department->nama_departemen }}</option>
+                      @else
+                      <option value="{{ $department->id }}">{{ $department->nama_departemen }}</option>
+                      @endif
+                  @endforeach
+                </select>
+                <div class="alert alert-danger mt-2 d-none" role="alert" id="alert-role"></div>
+            </div>
         
         </div>
         <div class="modal-footer bg-whitesmoke br">

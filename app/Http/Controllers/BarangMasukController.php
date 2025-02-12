@@ -5,17 +5,28 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\BarangMasuk;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BarangMasukController extends Controller
 {
     public function index()
     {
-        return view('barang-masuk.index', [
-            'barangs'      => Barang::all(),
-            'barangsMasuk' => BarangMasuk::all(),
-        ]);
+        
+        $barangMasuk = BarangMasuk::query()
+            ->join('users', 'barang_masuks.user_id', '=', 'users.id')
+            ->select(
+                'barang_masuks.tanggal_masuk',
+                'barang_masuks.user_id',
+                'users.name as user_name'
+            )
+            ->selectRaw('COUNT(*) as items_count')
+            ->selectRaw('SUM(quantity) as total_quantity')
+            ->groupBy('tanggal_masuk', 'user_id', 'users.name')
+            ->orderBy('tanggal_masuk', 'desc')
+            ->get();
+        
+        return view('barang-masuk.index', compact('barangMasuk'));
     }
 
     public function getDataBarangMasuk()
@@ -28,18 +39,18 @@ class BarangMasukController extends Controller
 
     public function getBarangByKode($kode)
     {
-        try {
-            $barang = Barang::where('kode', $kode)->firstOrFail();
+        $barang = Barang::where('kode', $kode)->first();
+
+        if ($barang) {
             return response()->json([
                 'success' => true,
                 'barang' => $barang
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Barang tidak ditemukan'
-            ], 404);
         }
+
+        return response()->json([
+            'success' => false
+        ]);
     }
 
     /**
@@ -57,41 +68,43 @@ class BarangMasukController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'tanggal_masuk'     => 'required',
-            'nama_barang'       => 'required',
-            'jumlah_masuk'      => 'required',
-        ],[
-            'tanggal_masuk.required'    => 'Pilih Barang Terlebih Dahulu !',
-            'nama_barang.required'      => 'Form Nama Barang Wajib Di Isi !',
-            'jumlah_masuk.required'     => 'Form Jumlah Stok Masuk Wajib Di Isi !',
+        // Validate the request
+        $request->validate([
+            'barang_id' => 'required|array',
+            'qty' => 'required|array',
+            'qty.*' => 'required|numeric|min:1',
         ]);
 
+        try {
+            DB::beginTransaction();
 
-        if($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+            // Loop through each item in the form
+            foreach ($request->barang_id as $key => $barangId) {
+                // Create barang masuk record
+                BarangMasuk::create([
+                    'tanggal_masuk' => now(),
+                    'barang_id' => $barangId,
+                    'quantity' => $request->qty[$key],
+                    'user_id' => Auth::user()->id
+                ]);
 
-        $barangMasuk = BarangMasuk::create([
-            'tanggal_masuk'     => $request->tanggal_masuk,
-            'nama_barang'       => $request->nama_barang,
-            'jumlah_masuk'      => $request->jumlah_masuk,
-            'user_id'           => Auth::user()->id
-        ]); 
-
-        if ($barangMasuk) {
-            $barang = Barang::where('nama_barang', $request->nama_barang)->first();
-            if ($barang) {
-                $barang->stok += $request->jumlah_masuk;
-                $barang->save();
+                // Update stock in barang table
+                $barang = Barang::findOrFail($barangId);
+                $barang->increment('stok', $request->qty[$key]);
             }
-        }
 
-        return response()->json([
-            'success'   => true,
-            'message'   => 'Data Berhasil Disimpan !',
-            'data'      => $barangMasuk
-        ]);
+            DB::commit();
+
+            return redirect()
+                ->route('barang-masuk.index')
+                ->with('success', 'Barang masuk berhasil ditambahkan');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()
+                ->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -41,13 +41,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/department/get-data', [DepartmentController::class, 'getDataDepartment']);
     Route::resource('/department', DepartmentController::class);
 
-    Route::get('/barang-masuk/create', [BarangMasukController::class, 'create'])->name('barang-masuk.create');
+
     Route::get('/barang/kode/{kode}', [BarangMasukController::class, 'getBarangByKode'])->name('barang.getByKode');
 
+    Route::get('/barang/kode/{kode}', [BarangMasukController::class, 'getBarangByKode']);
     Route::get('/barang-masuk/get-data', [BarangMasukController::class, 'getDataBarangMasuk']);
     Route::resource('/barang-masuk', BarangMasukController::class);
-
-    Route::get('/barang-masuk/create', [BarangMasukController::class, 'create'])->name('barang-masuk.create');
 });
 
 require __DIR__.'/auth.php';

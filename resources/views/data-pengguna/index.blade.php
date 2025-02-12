@@ -131,7 +131,7 @@
             let username = $('#username').val();
             let password = $('#password').val();
             let role_id = $('#role_id').val();
-            let department_id = $('#department_id').val();
+            let department_id = $('#department_id').val() ? parseInt($('#department_id').val()) : null;
             let token = $("meta[name='csrf-token']").attr("content");
 
             let formData = new FormData();

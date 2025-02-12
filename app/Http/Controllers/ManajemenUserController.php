@@ -57,7 +57,7 @@ class ManajemenUserController extends Controller
             'username'     => 'required',
             'password'  => 'required|min:1',
             'role_id'   => 'required',
-            'department_id' => 'required'
+            'department_id' => 'required|integer'
         ], [
             'name.required'     => 'Form Nama Wajib Di isi !',
             'username.required'    => 'Form Username Wajib Di isi !',

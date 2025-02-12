@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\BarangMasuk;
+use App\Models\BarangMasukItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -12,17 +13,18 @@ class BarangMasukController extends Controller
 {
     public function index()
     {
-        
         $barangMasuk = BarangMasuk::query()
             ->join('users', 'barang_masuks.user_id', '=', 'users.id')
+            ->leftJoin('barang_masuk_items', 'barang_masuks.id', '=', 'barang_masuk_items.barang_masuk_id')
             ->select(
+                'barang_masuks.id', // Tambahkan ini untuk detail button
                 'barang_masuks.tanggal_masuk',
                 'barang_masuks.user_id',
                 'users.name as user_name'
             )
-            ->selectRaw('COUNT(*) as items_count')
-            ->selectRaw('SUM(quantity) as total_quantity')
-            ->groupBy('tanggal_masuk', 'user_id', 'users.name')
+            ->selectRaw('COUNT(DISTINCT barang_masuk_items.barang_id) as items_count')
+            ->selectRaw('COALESCE(SUM(barang_masuk_items.quantity), 0) as total_quantity')
+            ->groupBy('barang_masuks.id', 'tanggal_masuk', 'user_id', 'users.name')
             ->orderBy('tanggal_masuk', 'desc')
             ->get();
         
@@ -78,17 +80,22 @@ class BarangMasukController extends Controller
         try {
             DB::beginTransaction();
 
-            // Loop through each item in the form
+            // Create satu record barang_masuk (header)
+            $barangMasuk = BarangMasuk::create([
+                'tanggal_masuk' => now(),
+                'user_id' => Auth::user()->id
+            ]);
+
+            // Loop untuk menyimpan items
             foreach ($request->barang_id as $key => $barangId) {
-                // Create barang masuk record
-                BarangMasuk::create([
-                    'tanggal_masuk' => now(),
+                // Create record di barang_masuk_items
+                BarangMasukItem::create([
+                    'barang_masuk_id' => $barangMasuk->id,
                     'barang_id' => $barangId,
-                    'quantity' => $request->qty[$key],
-                    'user_id' => Auth::user()->id
+                    'quantity' => $request->qty[$key]
                 ]);
 
-                // Update stock in barang table
+                // Update stock di tabel barang
                 $barang = Barang::findOrFail($barangId);
                 $barang->increment('stok', $request->qty[$key]);
             }
@@ -112,7 +119,29 @@ class BarangMasukController extends Controller
      */
     public function show(BarangMasuk $barangMasuk)
     {
-        //
+        
+    }
+
+    public function detail($id)
+    {
+        // Ambil data transaksi barang masuk berdasarkan ID
+        $transaksi = BarangMasuk::with(['items.barang', 'user'])
+                                ->findOrFail($id);
+
+        // Format data untuk response JSON
+        $response = [
+            'tanggal_masuk' => \Carbon\Carbon::parse($transaksi->tanggal_masuk)->format('d F Y'),
+            'user_name' => $transaksi->user->name,
+            'items' => $transaksi->items->map(function ($item) {
+                return [
+                    'kode_barang' => $item->barang->kode,
+                    'nama_barang' => $item->barang->nama_barang,
+                    'quantity' => $item->quantity,
+                ];
+            }),
+        ];
+
+        return response()->json($response);
     }
 
     /**

@@ -105,8 +105,8 @@
 
               <li class="menu-header">MANAJEMEN BARANG</li>
               <li><a class="nav-link {{ Request::is('barang-masuk') ? 'active' : '' }}" href="/barang-masuk"><i class="fa fa-solid fa-arrow-right"></i><span>Barang Masuk</span></a></li>
-              <li><a class="nav-link {{ Request::is('barang-keluar') ? 'active' : '' }}" href="barang-keluar"><i class="fa fa-sharp fa-solid fa-arrow-left"></i> <span>Barang Keluar</span></a></li>
-              <li><a class="nav-link {{ Request::is('permintaan-produk') ? 'active' : '' }}" href="permintaan-produk"><i class="fa fa-sharp fa-solid fa-clipboard-list"></i> <span>Permintaan Barang</span></a></li>
+              <li><a class="nav-link {{ Request::is('barang-keluar') ? 'active' : '' }}" href="/barang-keluar"><i class="fa fa-sharp fa-solid fa-arrow-left"></i> <span>Barang Keluar</span></a></li>
+              <li><a class="nav-link {{ Request::is('orders') ? 'active' : '' }}" href="/orders"><i class="fa fa-sharp fa-solid fa-clipboard-list"></i> <span>Permintaan Barang</span></a></li>
             
               {{-- <li class="menu-header">LAPORAN</li>
               <li><a class="nav-link {{ Request::is('laporan-stok') ? 'active' : '' }}" href="laporan-stok"><i class="fa fa-sharp fa-reguler fa-file"></i><span>Stok</span></a></li>

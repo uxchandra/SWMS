@@ -7,19 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class BarangMasuk extends Model
 {
     protected $fillable = [
-        'barang_id',
-        'quantity',
         'tanggal_masuk',
         'user_id',
     ];
 
-    public function barang()
+    public function items()
     {
-        return $this->belongsTo(Barang::class);
+        return $this->hasMany(BarangMasukItem::class);
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 }

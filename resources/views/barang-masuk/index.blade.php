@@ -1,5 +1,5 @@
 @extends('layouts.app')
-{{-- @include('barang-masuk.show') --}}
+@include('barang-masuk.show')
 
 @section('content')
     <div class="section-header d-flex justify-content-between align-items-center">
@@ -33,7 +33,7 @@
                                     <td>{{ $transaksi->total_quantity }} pcs</td>
                                     <td>{{ $transaksi->user_name }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#detailModal{{ $index }}">
+                                        <button type="button" class="btn btn-info btn-sm detail-btn" data-id="{{ $transaksi->id }}">
                                             <i class="fas fa-eye"></i> Detail
                                         </button>
                                     </td>
@@ -50,3 +50,45 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+    $(document).ready(function() {
+        $('.detail-btn').on('click', function() {
+            const id = $(this).data('id');
+            
+            // Show loading state
+            $('#modal-items').html('<tr><td colspan="4" class="text-center">Loading...</td></tr>');
+            $('#detailModal').modal('show');
+
+            // Fetch detail data
+            $.ajax({
+                url: `/barang-masuk/${id}/detail`,
+                method: 'GET',
+                success: function(response) {
+                    // Update modal content
+                    $('#modal-tanggal').text(response.tanggal_masuk);
+                    $('#modal-user').text(response.user_name);
+
+                    // Generate items table
+                    let itemsHtml = '';
+                    response.items.forEach((item, index) => {
+                        itemsHtml += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${item.kode_barang}</td>
+                                <td>${item.nama_barang}</td>
+                                <td>${item.quantity}</td>
+                            </tr>
+                        `;
+                    });
+                    $('#modal-items').html(itemsHtml);
+                },
+                error: function() {
+                    $('#modal-items').html('<tr><td colspan="4" class="text-center text-danger">Gagal memuat data</td></tr>');
+                }
+            });
+        });
+    });
+    </script>
+@endpush

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')
+{{-- @section('content')
     <div class="section-header">
         <h1>Dashboard</h1>
     </div>
@@ -20,7 +20,7 @@
                         <a href="{{ route('permintaan-produk.index') }}" class="ml-1" style="color: #0000e6; text-decoration: underline;">Lihat Detail Permintaan</a>
                     </div>
                 @endif
-            @elseif (auth()->user()->role->role === 'admin gudang')
+
                 @if ($ordersAdmin->count() == 0)
                     <div class="alert alert-info d-flex align-items-center" role="alert">
                         <i class="fas fa-info-circle mr-2"></i>
@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    @if (auth()->user()->role->role === 'kepala gudang' || auth()->user()->role->role === 'admin gudang')
+
         <div class="row">
             <!-- Card Semua Barang -->
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
@@ -166,7 +166,7 @@
                     </div>
                 </div>
             </div>
-    @endif
+
 
 
     @if (auth()->user()->role->role === 'admin service')
@@ -257,7 +257,6 @@
         </script>
     @endif
 
-    @if (auth()->user()->role->role === 'kepala gudang' || auth()->user()->role->role === 'admin gudang')
         <script>
             var ctx = document.getElementById('summaryChart').getContext('2d');
             var chart = new Chart(ctx, {
@@ -321,6 +320,6 @@
                 }
             });
         </script>
-    @endif
-@endpush
+
+@endpush --}}
 

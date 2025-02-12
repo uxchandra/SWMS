@@ -8,6 +8,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -46,7 +47,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/barang/kode/{kode}', [BarangMasukController::class, 'getBarangByKode']);
     Route::get('/barang-masuk/get-data', [BarangMasukController::class, 'getDataBarangMasuk']);
+    Route::get('/barang-masuk/{id}/detail', [BarangMasukController::class, 'detail'])->name('barang-masuk.detail');
     Route::resource('/barang-masuk', BarangMasukController::class);
+
+    Route::resource('orders', OrderController::class)->middleware('auth');
+    
 });
 
 require __DIR__.'/auth.php';

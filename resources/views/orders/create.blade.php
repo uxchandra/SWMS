@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="addOrderModal" tabindex="-1" role="dialog" aria-labelledby="addOrderModalLabel" aria-hidden="true">
+<div class="modal fade" id="addOrderModal" role="dialog" >
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -20,7 +20,7 @@
                             <div class="row mb-2 barang-row">
                                 <div class="col-md-6">
                                     <select class="form-control barang-select" name="barang_id[]" required>
-                                        <option value="">Pilih Barang</option>
+                                        <option value="">Cari Barang</option>
                                         @foreach($barangs as $barang)
                                             <option value="{{ $barang->id }}" data-stok="{{ $barang->stok }}">
                                                 {{ $barang->nama_barang }} (Stok: {{ $barang->stok }})

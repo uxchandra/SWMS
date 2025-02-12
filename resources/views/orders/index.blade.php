@@ -53,13 +53,13 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        
-        // Inisialisasi Select2 untuk semua dropdown dengan class .select2
-        $('.select2').select2({
-            placeholder: "Cari barang...", // Placeholder untuk search
-            allowClear: true, // Memungkinkan menghapus pilihan
-            width: '100%' // Lebar dropdown
+
+        $(document).ready(function() {
+                $('.barang-select').select2({
+                    width: '100%'
+            });
         });
+
 
         // Tambahkan event listener untuk menambahkan baris baru
         document.getElementById('tambah-barang').addEventListener('click', function () {

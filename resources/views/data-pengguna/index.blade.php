@@ -8,10 +8,10 @@
     <div class="section-header">
         <h1>Data Pengguna</h1>
         <div class="ml-auto">
-            <a href="javascript:void(0)" class="btn btn-primary" id="button_import"><i class="fa fa-upload"></i> 
+            <a href="javascript:void(0)" class="btn btn-info" id="button_import"><i class="fa fa-upload"></i> 
                 Import Data
             </a>
-            <a href="javascript:void(0)" class="btn btn-info" id="button_tambah_pengguna"><i class="fa fa-plus"></i> Tambah
+            <a href="javascript:void(0)" class="btn btn-primary" id="button_tambah_pengguna"><i class="fa fa-plus"></i> Tambah
                 Pengguna</a>
         </div>
 

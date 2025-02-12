@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>Data Jenis Barang</h1>
         <div class="ml-auto">
-            <a href="javascript:void(0)" class="btn btn-info" id="button_tambah_jenis_barang"><i class="fa fa-plus"></i>
+            <a href="javascript:void(0)" class="btn btn-primary" id="button_tambah_jenis_barang"><i class="fa fa-plus"></i>
                 Jenis Barang</a>
         </div>
     </div>

@@ -6,24 +6,19 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Department;
 use App\Models\Barang;
+use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        // Ambil data orders dengan relasi requester dan department
-        $orders = Order::with(['requester', 'department'])
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(10);
+        $orders = Order::with(['requester', 'department', 'orderItems.barang'])->get();
+        $departments = Department::all();
+        $barangs = Barang::all();
 
-        // Ambil data barang dari database
-        $barangs = Barang::all(); // Sesuaikan dengan model dan query Anda
-
-        // Kirim data orders dan barangs ke view
-        return view('orders.index', compact('orders', 'barangs'));
+        return view('orders.index', compact('orders', 'departments', 'barangs'));
     }
-
     public function create()
     {
         $departments = Department::all();
@@ -32,23 +27,44 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
+
+        // Validasi data yang diterima dari form
         $request->validate([
             'department_id' => 'required|exists:departments,id',
+            'barang_id' => 'required|array',
+            'barang_id.*' => 'exists:barangs,id',
+            'quantity' => 'required|array',
+            'quantity.*' => 'integer|min:1',
             'catatan' => 'nullable|string',
         ]);
 
-        Order::create([
-            'requester_id' => Auth::user()->id,
+        // Buat order baru
+        $order = Order::create([
+            'requester_id' => Auth::id(),
             'department_id' => $request->department_id,
             'status' => 'Pending',
             'catatan' => $request->catatan,
         ]);
 
-        return redirect()->route('orders.index')->with('success', 'Order berhasil dibuat');
+        // Simpan item-item yang diminta
+        foreach ($request->barang_id as $index => $barangId) {
+            $barang = Barang::find($barangId);
+            if ($barang) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'barang_id' => $barangId,
+                    'quantity' => $request->quantity[$index],
+                ]);
+            }
+        }
+
+        // Redirect ke halaman index dengan pesan sukses
+        return redirect()->route('orders.index')->with('success', 'Permintaan barang berhasil dibuat.');
     }
 
     public function show(Order $order)
     {
+        $order->load(['requester', 'department', 'orderItems.barang']);
         return view('orders.show', compact('order'));
     }
 

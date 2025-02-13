@@ -38,6 +38,7 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" name="department_id" value="{{ auth()->user()->department_id }}">
                         <!-- Tombol untuk menambah baris barang -->
                         <button type="button" class="btn btn-dark btn-sm" id="tambah-barang">
                             <i class="fas fa-plus"></i> Tambah Barang

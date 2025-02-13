@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/barang-masuk', BarangMasukController::class);
 
     Route::resource('orders', OrderController::class)->middleware('auth');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     
 });
 

@@ -14,6 +14,11 @@ class Order extends Model
         'approved_by_kadiv', 'approved_by_kagud', 'catatan'
     ];
 
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     public function requester()
     {
         return $this->belongsTo(User::class, 'requester_id');

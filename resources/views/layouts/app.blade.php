@@ -87,11 +87,25 @@
         <aside id="sidebar-wrapper ">
 
           <div class="sidebar-brand">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo STEP" style="height: 50px; width: auto; margin-right: 10px; margin-top: 20px; margin-bottom: 40px">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo STEP" style="height: 35px; width: auto; margin-right: 5px; margin-top: 20px; margin-bottom: 25px">
+            <a href="/" class="text-white">WAREHOUSE</a>
           </div>
 
           <ul class="sidebar-menu"> 
-             
+            @if (auth()->user()->role->role === 'admin divisi' || auth()->user()->role->role === 'kepala divisi')
+                <li class="sidebar-item mt-4">
+                    <a class="nav-link  {{ Request::is('/') || Request::is('dashboard') ? 'active' : '' }}" href="/">
+                        <i class="fas fa-fire "></i> <span class="align-middle">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="menu-header">MANAJEMEN BARANG</li>
+                <li><a class="nav-link {{ Request::is('orders') ? 'active' : '' }}" href="/orders"><i class="fa fa-sharp fa-solid fa-clipboard-list"></i> <span>Permintaan Barang</span></a></li>
+                <li><a class="nav-link {{ Request::is('laporan-permintaan') ? 'active' : '' }}" href="laporan-permintaan"><i class="fa fa-sharp fa-reguler fa-file"></i><span>Laporan Permintaan</span></a></li>        
+            @endif
+
+
+            @if (auth()->user()->role->role === 'superadmin' || auth()->user()->role->role === 'kepala gudang' || auth()->user()->role->role === 'admin gudang') 
               <li class="sidebar-item mt-4">
                 <a class="nav-link {{ Request::is('/') || Request::is('dashboard') ? 'active' : '' }}" href="/dashboard">
                   <i class="fas fa-fire"></i> <span class="align-middle">Dashboard</span>
@@ -115,7 +129,8 @@
               
               <li class="menu-header">MANAJEMEN USER</li>
               <li><a class="nav-link {{ Request::is('data-pengguna') ? 'active' : '' }}" href="data-pengguna"><i class="fa fa-solid fa-users"></i><span>Daftar Pengguna</span></a></li>
-              <li><a class="nav-link {{ Request::is('hak-akses') ? 'active' : '' }}" href="hak-akses"><i class="fa fa-solid fa-user-lock"></i><span>Hak Akses/Role</span></a></li>     
+              <li><a class="nav-link {{ Request::is('hak-akses') ? 'active' : '' }}" href="hak-akses"><i class="fa fa-solid fa-user-lock"></i><span>Hak Akses/Role</span></a></li>   
+            @endif  
           </ul>
 
         </aside>

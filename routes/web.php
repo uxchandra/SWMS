@@ -8,7 +8,9 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\JenisController;
 use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\OrderController;
+use App\Models\Barang;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -53,6 +55,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('orders', OrderController::class)->middleware('auth');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::put('/orders/{id}/approve', [OrderController::class, 'approve'])->name('orders.approve');
+    Route::get('/orders/scan/{id}', [OrderController::class, 'scan'])->name('orders.scan');
+    Route::put('/orders/{id}/complete', [OrderController::class, 'complete'])->name('orders.complete');
+
+    Route::post('/orders/scan/{id}', [BarangKeluarController::class, 'processScan'])->name('orders.processScan');
+    Route::get('/barang-keluar', [BarangKeluarController::class, 'index'])->name('barang-keluar.index');
+    Route::get('/barang-keluar/create', [BarangKeluarController::class, 'create'])->name('barang-keluar.create');
+    Route::get('/barang-keluar/{barangKeluar}/detail', [BarangKeluarController::class, 'detail'])->name('barang-keluar.detail');
     
 });
 

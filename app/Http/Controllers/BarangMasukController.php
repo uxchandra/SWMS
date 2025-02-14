@@ -17,19 +17,27 @@ class BarangMasukController extends Controller
             ->join('users', 'barang_masuks.user_id', '=', 'users.id')
             ->leftJoin('barang_masuk_items', 'barang_masuks.id', '=', 'barang_masuk_items.barang_masuk_id')
             ->select(
-                'barang_masuks.id', // Tambahkan ini untuk detail button
+                'barang_masuks.id',
                 'barang_masuks.tanggal_masuk',
+                'barang_masuks.created_at', // Tambahkan ini
                 'barang_masuks.user_id',
                 'users.name as user_name'
             )
             ->selectRaw('COUNT(DISTINCT barang_masuk_items.barang_id) as items_count')
             ->selectRaw('COALESCE(SUM(barang_masuk_items.quantity), 0) as total_quantity')
-            ->groupBy('barang_masuks.id', 'tanggal_masuk', 'user_id', 'users.name')
+            ->groupBy('barang_masuks.id', 'tanggal_masuk', 'barang_masuks.created_at', 'user_id', 'users.name')
             ->orderBy('tanggal_masuk', 'desc')
             ->get();
         
         return view('barang-masuk.index', compact('barangMasuk'));
     }
+
+
+    /**
+     * Retrieve all data of 'Barang Masuk' records and return it as a JSON response.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
 
     public function getDataBarangMasuk()
     {

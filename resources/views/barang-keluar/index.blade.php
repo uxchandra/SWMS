@@ -1,17 +1,17 @@
 @extends('layouts.app')
-@include('barang-masuk.show')
+@include('barang-keluar.show')
 
 @section('content')
     <div class="section-header d-flex justify-content-between align-items-center">
-        <h1>Data Barang Masuk</h1>
-        <a href="{{ route('barang-masuk.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Tambah Barang Masuk
+        <h1>Data Barang Keluar</h1>
+        <a href="{{ route('barang-keluar.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Tambah Barang Keluar
         </a>
     </div>
 
     <div class="card">
         <div class="card-body">
-            @if($barangMasuk && $barangMasuk->count() > 0)
+            @if($barangKeluar && $barangKeluar->count() > 0)
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
@@ -19,6 +19,7 @@
                                 <th>No</th>
                                 <th>Tanggal</th>
                                 <th>Waktu</th>
+                                <th>Department</th>
                                 <th>Jumlah Item</th>
                                 <th>Total Quantity</th>
                                 <th>Input By</th>
@@ -26,14 +27,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($barangMasuk as $index => $transaksi)
+                            @foreach($barangKeluar as $index => $transaksi)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_masuk)->translatedFormat('d F Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_keluar)->translatedFormat('d F Y') }}</td>
                                     <td>{{ $transaksi->created_at ? $transaksi->created_at->format('H:i') : '-' }}</td>
+                                    <td>
+                                        @if($transaksi->order && $transaksi->order->department)
+                                            {{ $transaksi->order->department->nama_departemen }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <td>{{ $transaksi->items_count }} item</td>
                                     <td>{{ $transaksi->total_quantity }} pcs</td>
-                                    <td>{{ $transaksi->user_name }}</td>
+                                    <td>{{ $transaksi->user->name }}</td>
                                     <td>
                                         <button type="button" class="btn btn-info btn-sm detail-btn" data-id="{{ $transaksi->id }}">
                                             <i class="fas fa-eye"></i> Detail
@@ -46,7 +54,7 @@
                 </div>
             @else
                 <div class="text-center py-4">
-                    <p>Belum ada data barang masuk</p>
+                    <p>Belum ada data barang keluar</p>
                 </div>
             @endif
         </div>
@@ -65,11 +73,11 @@
 
             // Fetch detail data
             $.ajax({
-                url: `/barang-masuk/${id}/detail`,
+                url: `/barang-keluar/${id}/detail`,
                 method: 'GET',
                 success: function(response) {
                     // Update modal content
-                    $('#modal-tanggal').text(response.tanggal_masuk);
+                    $('#modal-tanggal').text(response.tanggal_keluar);
                     $('#modal-user').text(response.user_name);
 
                     // Generate items table

@@ -14,12 +14,11 @@
                         <div class="col-md-6">
                             <p><strong>Requester :</strong> {{ $order->requester->name }}</p>
                             <p><strong>Department :</strong> {{ $order->department->nama_departemen }}</p>
-                            <p><strong>Status :</strong> {{ $order->status }}</p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Tanggal Request :</strong> {{ $order->created_at->translatedFormat('d F Y') }}</p>
                             <p><strong>Waktu :</strong> {{ $order->created_at->format('H:i') }}</p>
-                            <p><strong>Catatan :</strong> {{ $order->catatan ?: '-' }}</p>
+                            <p><strong>Status :</strong> {{ $order->status }}</p>
                         </div>
                     </div>
 

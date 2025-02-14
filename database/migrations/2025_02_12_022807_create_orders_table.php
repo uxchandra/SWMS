@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('requester_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
-            $table->enum('status', ['Pending', 'Approved by Kadiv', 'Approved by Kagud', 'Processed'])->default('Pending');
+            $table->enum('status', ['Pending', 'Approved by Kadiv', 'Approved by Kagud', 'Ready', 'Completed'])->default('Pending');
             $table->timestamp('tanggal_approve_kadiv')->nullable();
             $table->timestamp('tanggal_approve_kagud')->nullable();
             $table->foreignId('approved_by_kadiv')->nullable()->constrained('users')->onDelete('set null');

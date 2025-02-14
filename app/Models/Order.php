@@ -38,4 +38,31 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'approved_by_kagud');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($order) {
+            $order->keterangan = static::getKeteranganByStatus($order->status);
+        });
+        
+        static::updating(function ($order) {
+            if ($order->isDirty('status')) {
+                $order->keterangan = static::getKeteranganByStatus($order->status);
+            }
+        });
+    }
+
+    protected static function getKeteranganByStatus($status)
+    {
+        return match($status) {
+            'Pending' => 'Menunggu approval Kepala Divisi',
+            'Approved by Kadiv' => 'Menunggu approval Kepala Gudang',
+            'Approved by Kagud' => 'Sedang diproses oleh Staff Gudang',
+            'Ready' => 'Barang siap diambil',
+            'Completed' => 'Selesai',
+            default => ''
+        };
+    }
 }

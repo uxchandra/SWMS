@@ -94,4 +94,48 @@ class OrderController extends Controller
         $order->delete();
         return redirect()->route('orders.index')->with('success', 'Order berhasil dihapus');
     }
+
+    public function approve(Request $request, $id)
+    {
+        // Cari order berdasarkan ID
+        $order = Order::findOrFail($id);
+
+        // Periksa role user yang sedang login
+        $userRole = Auth::user()->role->role;
+
+        // Update status berdasarkan role
+        if ($userRole === 'kepala divisi' && $order->status === 'Pending') {
+            $order->status = 'Approved by Kadiv';
+        } elseif ($userRole === 'kepala gudang' && $order->status === 'Approved by Kadiv') {
+            $order->status = 'Approved by Kagud';
+        } else {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk melakukan aksi ini.');
+        }
+
+        // Simpan perubahan
+        $order->save();
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('orders.index')->with('success', 'Permintaan berhasil disetujui.');
+    }
+
+    public function scan($id)
+    {
+        $order = Order::findOrFail($id);
+        return view('barang-keluar.create', compact('order'));
+    }
+
+    public function complete($id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->status !== 'Ready') {
+            return redirect()->back()->with('error', 'Status order tidak valid untuk diselesaikan.');
+        }
+
+        $order->status = 'Completed';
+        $order->save();
+
+        return redirect()->route('orders.index')->with('success', 'Order berhasil diselesaikan.');
+    }
 }

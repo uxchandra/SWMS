@@ -3983,6 +3983,14 @@ body:not(.sidebar-mini)
     border-top-color: #000 !important;
 }
 
+.login-page {
+    background-image: url('/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
 
 
 /*# sourceMappingURL=style.css.map */

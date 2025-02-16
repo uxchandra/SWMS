@@ -3697,7 +3697,7 @@ body.layout-3 .main-footer {
     width: 100%;
 }
 .main-sidebar .sidebar-menu li a:hover {
-    background-color: #000;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 .main-sidebar .sidebar-menu li.active a {
     color: #6777ef;
@@ -3977,6 +3977,10 @@ body:not(.sidebar-mini)
     width: 80%; /* Atur persentase sesuai kebutuhan */
     height: 300px; /* Atur tinggi sesuai kebutuhan */
     margin: auto; /* Center jika perlu */
+}
+
+.nav-link-user[data-toggle="dropdown"]::after {
+    border-top-color: #000 !important;
 }
 
 
